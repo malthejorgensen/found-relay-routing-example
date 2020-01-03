@@ -68,21 +68,30 @@ class Query(graphene.ObjectType):
     #     return assignment
 
 
-class AddLetterToCourseTitle(graphene.relay.ClientIDMutation):
+class UpdateCourseDescription(graphene.relay.ClientIDMutation):
     class Input:
-        course_id = graphene.ID()
+        id = graphene.ID()
+        description = graphene.ID()
 
     course = graphene.Field(Course, required=True)
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, **input):
-        course_id = input.get('course_id')
+        course_id = input.get('id')
+        object_type, object_id = from_global_id(course_id)
+        if object_type != 'Course':
+            raise graphql.GraphQLError('Bad course id')
 
-        return AddLetterToCourseTitle(course=Course())
+        index, course = [(i, c) for i, c in enumerate(COURSES) if c.id == object_id][0]
+
+        course.description = input.get('description')
+        COURSES[index] = course
+
+        return UpdateCourseDescription(course=course)
 
 
 class Mutation(graphene.ObjectType):
-    add_letter_to_course_title = AddLetterToCourseTitle.Field()
+    update_course_description = UpdateCourseDescription.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
