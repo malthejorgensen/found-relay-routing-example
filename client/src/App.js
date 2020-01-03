@@ -41,15 +41,18 @@ function SmallCourse(props) {
 
 export function CoursePage(props) {
   // return <pre>{JSON.stringify(props)}</pre>
+  const title = props ? <h1>{props.course.title}</h1> : <h1>Loading...</h1>
   const render = ({ error, props }) => props ? <h1>{props.course.title}</h1> : <h1>Loading...</h1>
-  return <>
-    <h1>This is a course</h1>
-    <pre>{JSON.stringify(props)}</pre>
-    <QueryRenderer
+  let nestedQR = <QueryRenderer
       environment={environment}
       query={graphql`query AppQuery($courseId: ID!) { course(id: $courseId) { title } }`}
       variables={{courseId: btoa(`Course:${props.match.params.courseId}`)}}
       render={render}
     />
+  nestedQR = null
+  return <>
+    {title}
+    <pre>{JSON.stringify(props)}</pre>
+    {nestedQR}
   </>;
 }
