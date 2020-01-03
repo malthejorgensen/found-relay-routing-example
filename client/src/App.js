@@ -8,6 +8,21 @@ import { environment } from "./graphql";
 import "./App.css";
 
 export function App({ children }) {
+  const render = ({ error, props }) => props ? props.courses.map(c => <li><Link to={`/courses/${atob(c.id).split(':')[1]}`}>{c.title}</Link></li>) : <h1>Loading...</h1>
+
+  let nestedQR = <QueryRenderer
+      environment={environment}
+      query={graphql`
+        query AppSidebarQuery {
+          courses {
+            id
+            title
+          }
+        }`
+      }
+      render={render}
+    />
+
   return (
     <div className="App">
       <nav className="Sidebar">
@@ -16,12 +31,7 @@ export function App({ children }) {
           <li>
             <Link to="/">Overview</Link>
           </li>
-          <li>
-            <Link to="/courses/1234">Course 1234</Link>
-          </li>
-          <li>
-            <Link to="/courses/abc">Course ABC</Link>
-          </li>
+          {nestedQR}
         </ul>
       </nav>
       <div className="Content">{children}</div>  

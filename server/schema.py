@@ -12,11 +12,18 @@ class Course(graphene.ObjectType, interfaces=[graphene.relay.Node]):
     )
 
     def resolve_title(obj, info):
-        return f'TFS {obj.title} TFS'
+        return obj.title
+
+
+COURSES = [
+    Course(id='abc', title='TFS ABC TFS', description='The alphabet'),
+    Course(id='1234', title='TFS 1234 TFS', description='The first four numbers'),
+]
 
 
 class Query(graphene.ObjectType):
     node = Node.Field()  # required by Relay spec
+    courses = graphene.List(Course, required=False, description='Returns all courses')
     course = graphene.Field(
         Course,
         id=graphene.ID(required=True),
@@ -29,13 +36,15 @@ class Query(graphene.ObjectType):
     #     required=False,
     #     description='Returns assignment by id',
     # )
+    def resolve_courses(self, info):
+        return [c for c in COURSES]
 
     def resolve_course(self, info, id):
         object_type, object_id = from_global_id(id)
         if object_type != 'Course':
             raise graphql.GraphQLError('Bad course id')
 
-        return Course(title=object_id)
+        return [c for c in COURSES if c.id == object_id][0]
 
     # def resolve_assignment(self, info, id):
     #     object_type, object_id = from_global_id(id)
