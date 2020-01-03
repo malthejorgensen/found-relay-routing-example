@@ -1,4 +1,5 @@
 from flask import Flask, escape, request
+from flask_cors import cross_origin
 from flask_graphql import GraphQLView
 
 from schema import schema
@@ -14,5 +15,6 @@ def hello():
 
 
 @app.route('/graphql', methods=['GET', 'POST'])
+@cross_origin()
 def api_graphql_web():
     return GraphQLView.as_view('graphql', schema=schema, graphiql=True, middleware=[])()

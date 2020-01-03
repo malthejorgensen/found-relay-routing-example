@@ -12,7 +12,7 @@ class Course(graphene.ObjectType, interfaces=[graphene.relay.Node]):
     )
 
     def resolve_title(obj, info):
-        return 'History 101'
+        return f'TFS {obj.title} TFS'
 
 
 class Query(graphene.ObjectType):
@@ -35,7 +35,7 @@ class Query(graphene.ObjectType):
         if object_type != 'Course':
             raise graphql.GraphQLError('Bad course id')
 
-        return Course()
+        return Course(title=object_id)
 
     # def resolve_assignment(self, info, id):
     #     object_type, object_id = from_global_id(id)

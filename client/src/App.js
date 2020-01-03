@@ -1,26 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import graphql from 'babel-plugin-relay/macro'
+import { Link } from "found";
+import React from "react";
+import { QueryRenderer } from 'react-relay'
 
-function App() {
+import logo from "./logo.svg";
+import { environment } from "./graphql";
+import "./App.css";
+
+export function App({ children }) {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <nav className="Sidebar">
+        <h2>Courses</h2>
+        <ul>
+          <li>
+            <Link to="/">Overview</Link>
+          </li>
+          <li>
+            <Link to="/courses/1234">Course 1234</Link>
+          </li>
+          <li>
+            <Link to="/courses/abc">Course ABC</Link>
+          </li>
+        </ul>
+      </nav>
+      <div className="Content">{children}</div>  
     </div>
   );
 }
 
-export default App;
+export function DefaultPage() {
+  return <h1>Please click a course in the sidebar</h1>;
+}
+
+function SmallCourse(props) {
+  return (
+    <h1>{props.course.title}</h1>
+  )
+}
+
+export function CoursePage(props) {
+  // return <pre>{JSON.stringify(props)}</pre>
+  const render = ({ error, props }) => props ? <h1>{props.course.title}</h1> : <h1>Loading...</h1>
+  return <>
+    <h1>This is a course</h1>
+    <pre>{JSON.stringify(props)}</pre>
+    <QueryRenderer
+      environment={environment}
+      query={graphql`query AppQuery($courseId: ID!) { course(id: $courseId) { title } }`}
+      variables={{courseId: btoa(`Course:${props.match.params.courseId}`)}}
+      render={render}
+    />
+  </>;
+}
