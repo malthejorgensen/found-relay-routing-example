@@ -10,7 +10,15 @@ const Routes = <Route path="/" Component={App}>
     <Route
       path="courses/:courseId"
       Component={CoursePage}
-      query={graphql`query RoutesQuery($courseId: ID!) { course(id: $courseId) { title } }`}
+      query={graphql`
+        query RoutesQuery($courseId: ID!) { 
+          course(id: $courseId) {
+            id
+            title
+            description
+          }
+        }`
+      }
       prepareVariables={(props) => ({courseId: btoa(`Course:${props.courseId}`)})}
     />
   </Route>

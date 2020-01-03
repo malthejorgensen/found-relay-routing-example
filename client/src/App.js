@@ -50,6 +50,7 @@ function SmallCourse(props) {
 }
 
 export function CoursePage(props) {
+  if (!props) { return <h1>Loading...</h1>}
   // return <pre>{JSON.stringify(props)}</pre>
   const title = props ? <h1>{props.course.title}</h1> : <h1>Loading...</h1>
   const render = ({ error, props }) => props ? <h1>{props.course.title}</h1> : <h1>Loading...</h1>
@@ -61,7 +62,8 @@ export function CoursePage(props) {
     />
   nestedQR = null
   return <>
-    {title}
+    <h1>{props.course.title}</h1>
+    <p>{props.course.description}</p>
     <pre>{JSON.stringify(props)}</pre>
     {nestedQR}
   </>;

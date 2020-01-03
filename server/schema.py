@@ -10,6 +10,9 @@ class Course(graphene.ObjectType, interfaces=[graphene.relay.Node]):
     title = graphene.String(
         description='Returns the title of the course', required=True
     )
+    description = graphene.String(
+        description='Returns the description of the course', required=True
+    )
 
     def resolve_title(obj, info):
         return obj.title
